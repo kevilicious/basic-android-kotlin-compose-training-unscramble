@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-buildscript {
-    ext {
-        compose_compiler_version = '1.4.0'
-    }
-}
+package com.example.android.unscramble.ui.theme
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    id 'com.android.application' version '7.4.0' apply false
-    id 'com.android.library' version '7.4.0' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
-}
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Shapes
+import androidx.compose.ui.unit.dp
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+val Shapes = Shapes(
+    small = RoundedCornerShape(4.dp),
+    medium = RoundedCornerShape(4.dp),
+    large = RoundedCornerShape(0.dp)
+)

@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.android.unscramble.ui
 
-buildscript {
-    ext {
-        compose_compiler_version = '1.4.0'
-    }
-}
-
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    id 'com.android.application' version '7.4.0' apply false
-    id 'com.android.library' version '7.4.0' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+/**
+ * Data class that represents the game UI state
+ */
+data class GameUiState(
+    val currentScrambledWord: String = "",
+    val currentWordCount: Int = 1,
+    val score: Int = 0,
+    val isGuessedWordWrong: Boolean = false,
+    val isGameOver: Boolean = false
+)
