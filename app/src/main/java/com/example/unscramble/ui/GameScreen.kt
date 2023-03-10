@@ -50,13 +50,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble.R
 import com.example.unscramble.ui.theme.UnscrambleTheme
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 
@@ -66,96 +61,58 @@ fun GameScreen(
     gameViewModel: GameViewModel = viewModel()
 ) {
     val gameUiState by gameViewModel.uiState.collectAsState()
-    val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                scrollBehavior = scrollBehavior
-            )
-        }
-    ) { it ->
-        Column(
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        GameStatus(
+            wordCount = gameUiState.currentWordCount,
+            score = gameUiState.score
+        )
+        GameLayout(
+            onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
+            userGuess = gameViewModel.userGuess,
+            onKeyboardDone = { gameViewModel.checkUserGuess() },
+            currentScrambledWord = gameUiState.currentScrambledWord,
+            isGuessWrong = gameUiState.isGuessedWordWrong
+        )
+        Row(
             modifier = modifier
-                .verticalScroll(rememberScrollState())
-//                .padding(16.dp),
-                .padding(it),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-            GameStatus(
-                wordCount = gameUiState.currentWordCount,
-                score = gameUiState.score
-            )
-            GameLayout(
-                onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
-                userGuess = gameViewModel.userGuess,
-                onKeyboardDone = { gameViewModel.checkUserGuess() },
-                currentScrambledWord = gameUiState.currentScrambledWord,
-                isGuessWrong = gameUiState.isGuessedWordWrong
-            )
-            Row(
+            OutlinedButton(
+                onClick = { gameViewModel.skipWord() },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+            ) {
+                Text(stringResource(R.string.skip))
+            }
+            Button(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceAround
+                    .weight(1f)
+                    .padding(start = 8.dp),
+                onClick = { gameViewModel.checkUserGuess() }
             ) {
-                OutlinedButton(
-                    onClick = { gameViewModel.skipWord() },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp)
-                ) {
-                    Text(stringResource(R.string.skip))
-                }
-                Button(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(start = 8.dp),
-                    onClick = { gameViewModel.checkUserGuess() }
-                ) {
-                    Text(stringResource(R.string.submit))
-                }
-            }
-            if (gameUiState.isGameOver) {
-                FinalScoreDialog(
-                    score = gameUiState.score,
-                    onPlayAgain = { gameViewModel.resetGame() }
-                )
+                Text(stringResource(R.string.submit))
             }
         }
+        if (gameUiState.isGameOver) {
+            FinalScoreDialog(
+                score = gameUiState.score,
+                onPlayAgain = { gameViewModel.resetGame() }
+            )
+        }
     }
+
 }
 
-@Composable
-private fun TopAppBar(
-    scrollBehavior: TopAppBarScrollBehavior?,
-    modifier: Modifier = Modifier
-) {
-    CenterAlignedTopAppBar(
-        title = {
-            Row (modifier = modifier.background(MaterialTheme.colorScheme.background))
-            {
-                Image(
-                    painter = painterResource(id = R.drawable.videogame),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(36.dp)
-                )
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.displaySmall,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-        },
-//        navigationIcon = navigationIconContent,
-        scrollBehavior = scrollBehavior,
-        modifier = modifier
-    )
-}
 @Composable
 fun GameStatus(wordCount: Int, score: Int, modifier: Modifier = Modifier) {
     Row(
